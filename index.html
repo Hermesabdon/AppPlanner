@@ -40,58 +40,15 @@
 </div>
 <div class="marcador">
 <h3>📊 Progreso Total</h3>
-<p><strong>Comidas cumplidas:</strong> <span id="comidasTotal">0</span> / <span id="comidasMax">408</span></p>
+<p><strong>Comidas cumplidas:</strong> <span id="comidasTotal">0</span> / <span id="comidasMax">336</span></p>
 <p><strong>Kcal cumplidas:</strong> <span id="kcalTotal">0</span> / <span id="kcalMax">92400</span></p>
 </div>
-<div id="planner" style="display:block;">
-<style>
-  .tab-buttons {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .tab-buttons button {
-    margin: 0 10px;
-    padding: 10px 20px;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .tab-section {
-    display: none;
-  }
-  .tab-section.active {
-    display: block;
-  }
-</style>
-<div class="tab-buttons">
+
+<div class="tab-buttons" style="text-align:center; margin-bottom:20px;">
 <button onclick="mostrarTab('planner')">Planner</button>
 <button onclick="mostrarTab('compras')">Lista de Compras</button>
 </div>
-<div class="tab-section active" id="planner"></div>
-<div class="tab-section" id="compras">
-<h3>🛒 Lista de compras (cada 2 semanas)</h3>
-<ul>
-<li><strong>Verduras:</strong> zapallito, zanahoria, cebolla, morrón, espinaca, repollo</li>
-<li><strong>Proteínas:</strong> carne picada, pollo, jamón cocido, atún, huevo</li>
-<li><strong>Legumbres:</strong> garbanzos</li>
-<li><strong>Lácteos:</strong> queso descremado, leche en polvo</li>
-<li><strong>Otros:</strong> salsa de tomate, tortillas Bimbo, galletas de arroz</li>
-<li><strong>Sopas:</strong> Capresse x 20</li>
-<li><strong>Fruta:</strong> manzana roja x 14</li>
-</ul>
-<p><em>Recordá pedir con 2 días hábiles de anticipación. Stock cada 2 semanas.</em></p>
-</div>
-<script>
-function mostrarTab(tabId) {
-  document.querySelectorAll('.tab-section').forEach(section => {
-    section.classList.remove('active');
-  });
-  document.getElementById(tabId).classList.add('active');
-}
-</script>
-<details class="semana"><summary>Semana 1 — <span id="resumen_semana_1">✅ 0/34 | 🔥 0 / 7700 kcal</span></summary><div class="dia"><h4>Lunes</h4>
+<div class="tab-section active" id="planner"><details class="semana"><summary>Semana 1 — <span id="resumen_semana_1">✅ 0/34 | 🔥 0 / 7700 kcal</span></summary><div class="dia"><h4>Lunes</h4>
 <div class="comida" style="background:#FFF4E6">
 <strong>☕ DES:</strong> 150 kcal
               <label><input id="sem1_dia0_des" onchange="guardar(this)" type="checkbox"/> ¿Cumplido?</label>
@@ -2060,7 +2017,7 @@ function mostrarTab(tabId) {
               <label><input id="sem12_dia6_cen" onchange="guardar(this)" type="checkbox"/> ¿Cumplido?</label>
 <div class="detalle">Tarta de pollo y puerro (base espinaca)</div>
 </div></div></details></div>
-<div id="compras" style="display:none;">
+<div class="tab-section" id="compras" style="display:none;">
 <h3>🛒 Lista de compras (cada 2 semanas)</h3>
 <ul>
 <li><strong>Verduras:</strong> zapallito, zanahoria, cebolla, morrón, espinaca, repollo</li>
@@ -2073,12 +2030,28 @@ function mostrarTab(tabId) {
 </ul>
 <p><em>Recordá pedir con 2 días hábiles de anticipación. Stock cada 2 semanas.</em></p>
 </div>
+<style>
+  .tab-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .tab-section { display: none; }
+  .tab-section.active { display: block; }
+</style>
 <script>
-function mostrarTab(id) {
-  document.getElementById("planner").style.display = (id === "planner") ? "block" : "none";
-  document.getElementById("compras").style.display = (id === "compras") ? "block" : "none";
+function mostrarTab(tabId) {
+  document.querySelectorAll('.tab-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  document.getElementById(tabId).classList.add('active');
 }
 </script>
+
 <script>
 const kcalValores = {
   "desayuno": 150,
@@ -2104,6 +2077,7 @@ function actualizarProgreso() {
   const checkboxes = document.querySelectorAll("input[type=checkbox]");
   let totalComidas = 0;
   let totalKcal = 0;
+  const kcalReposo = 2200;
   const resumenSemanas = {};
   checkboxes.forEach(cb => {
     const partes = cb.id.split("_");
@@ -2119,7 +2093,7 @@ function actualizarProgreso() {
     }
   });
   document.getElementById("comidasTotal").textContent = totalComidas;
-  document.getElementById("kcalTotal").textContent = totalKcal;
+  document.getElementById("kcalTotal").textContent = totalKcal - (12 * 7 * kcalReposo);
   for (let i = 1; i <= 12; i++) {
     const r = resumenSemanas[i] || { comidas: 0, kcal: 0 };
     const resumenElem = document.getElementById("resumen_semana_" + i);
@@ -2134,11 +2108,6 @@ window.onload = function() {
   });
   actualizarProgreso();
 };
-
-function mostrarTab(id) {
-  document.getElementById("planner").style.display = id === "planner" ? "block" : "none";
-  document.getElementById("compras").style.display = id === "compras" ? "block" : "none";
-}
 </script>
 </body>
 </html>
